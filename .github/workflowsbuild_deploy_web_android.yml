@@ -9,23 +9,32 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
+    strategy:
+          matrix:
+            node-version: [20.x]
     steps:
       # Step 1: Download the code onto the virtual machine
       - name: 🏗 Checkout repository
         uses: actions/checkout@v4
 
       # Step 2: Install Node.js (the engine that runs npm/npx)
-      - name: 🏗 Setup Node
+      - name: 🏗 Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       # Step 3: Install project dependencies
       - name: 📦 Install dependencies
         run: npm install
-
-      # Step 4: Run the Expo export (the same as my 'predeploy' script) -> to fix the iissue with  npm run deploy when i do Manual Deployment
-      - name: 🚀 Export Web Build 
-        run: npx expo export -p web
+        
+      - name: 🚀 Build & Export Web App
+      # This triggers 'npx expo export -p web' as defined in your package.json
+      run: npm run predeploy
+      
+      - name: Upload artifact
+        # This saves the 'dist' folder so the next job can find it
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
