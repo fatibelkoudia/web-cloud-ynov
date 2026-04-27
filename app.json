@@ -28,6 +28,12 @@
     },
     "experiments": {
       "baseUrl": "/web-cloud-ynov"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7a682dbe-a8cf-48c3-ae52-768600148f7f"
+      }
+    },
+    "owner": "tima101"
   }
 }
