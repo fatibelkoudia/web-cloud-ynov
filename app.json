@@ -20,6 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.tima101.webcloudynov",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
