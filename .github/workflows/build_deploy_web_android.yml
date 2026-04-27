@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  # JOB 1: BUILD
+  # JOB 1: BUILD 
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -29,13 +29,28 @@ jobs:
       - name: 🚀 Build & Export Web App
         run: npm run predeploy
 
-      - name: 📤 Upload artifact
+      - name: 📤 Upload web artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
           if-no-files-found: error
 
-  # JOB 2: DEPLOY 
+      # --- MOBILE STEPS  ---
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📱 Build Android App
+        # Triggers the cloud build 
+        run: eas build --platform android --profile preview --non-interactive --no-wait
+
+      - name: 🚀 Create OTA Update
+        # Sends updates to existing apps
+        run: eas update --auto --platform android --non-interactive
+
+  # JOB 2: DEPLOY
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -49,15 +64,3 @@ jobs:
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-      # JOB 3: BUILD ANDROID APP
-      - name: 🏗 Setup EAS
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: 📱 Build Android App
-        # This sends the code to Expo's "Cloud Factory" to build the Android app
-        run: eas build --platform android --profile preview --non-interactive --no-wait
-      - name: 🚀 Create Update
-        run: eas update --auto --platform android --non-interactive
