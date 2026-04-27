@@ -12,13 +12,13 @@ export default function App() {
     <View style={styles.container}>
       {/* Header Area */}
       <View style={styles.header}>
-        <Text style={styles.title}>Welcome Board</Text>
+        <Text style={styles.title}>Welcome </Text>
       </View>
 
       {/* Main Content */}
       <View style={styles.content}>
         <Text style={styles.greeting}>Hi there!</Text>
-        <Text style={styles.subtitle}>This is your simple React Native boilerplate.</Text>
+        <Text style={styles.subtitle}>This is your simple React Native example.</Text>
         
         <TouchableOpacity style={styles.button} onPress={handlePress}>
           <Text style={styles.buttonText}>Click Me</Text>
