@@ -35,7 +35,7 @@ jobs:
           path: ./dist
           if-no-files-found: error
 
-  # JOB 2: DEPLOY (Notice how this is at the same level as 'build')
+  # JOB 2: DEPLOY 
   deploy:
     needs: build
     runs-on: ubuntu-latest
