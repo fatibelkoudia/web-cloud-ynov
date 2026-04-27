@@ -51,6 +51,7 @@ jobs:
       pages: write
       id-token: write
       steps:
+        #Specify runner + deployment step
         - name: 🚀 Deploy to GitHub Pages
           id: deployment
-          uses: actions/deploy-pages@v4
+          uses: actions/deploy-pages@v2
