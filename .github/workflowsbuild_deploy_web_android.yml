@@ -1,0 +1,31 @@
+name: build and deploy Web & Android
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Download the code onto the virtual machine
+      - name: 🏗 Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install Node.js (the engine that runs npm/npx)
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # Step 3: Install project dependencies
+      - name: 📦 Install dependencies
+        run: npm install
+
+      # Step 4: Run the Expo export (the same as my 'predeploy' script) -> to fix the iissue with  npm run deploy when i do Manual Deployment
+      - name: 🚀 Export Web Build 
+        run: npx expo export -p web
