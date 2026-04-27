@@ -49,3 +49,13 @@ jobs:
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      # JOB 3: BUILD ANDROID APP
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📱 Build Android App
+        # This sends the code to Expo's "Cloud Factory" to build the Android app
+        run: eas build --platform android --profile preview --non-interactive --no-wait
