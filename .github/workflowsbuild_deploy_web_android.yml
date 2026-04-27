@@ -9,10 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     strategy:
-          matrix:
-            node-version: [20.x]
+      matrix:
+        node-version: [ 20.x ]
     steps:
       # Step 1: Download the code onto the virtual machine
       - name: 🏗 Checkout repository
@@ -23,18 +23,34 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: "npm"
 
       # Step 3: Install project dependencies
       - name: 📦 Install dependencies
         run: npm install
-        
+
       - name: 🚀 Build & Export Web App
-      # This triggers 'npx expo export -p web' as defined in your package.json
-      run: npm run predeploy
-      
-      - name: Upload artifact
+        # This triggers 'npx expo export -p web' as defined in your package.json
+        run: npm run predeploy
+
+      - name: 📤 Upload artifact
         # This saves the 'dist' folder so the next job can find it
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
+          if-no-files-found: error
+
+    # JOB 2: DEPLOY
+    deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+      steps:
+        - name: 🚀 Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
