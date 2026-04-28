@@ -2,6 +2,7 @@
   "expo": {
     "name": "web-cloud-ynov",
     "slug": "web-cloud-ynov",
+    "scheme": "web-cloud-ynov",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +26,8 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "bundler": "metro",
+      "output": "static",
       "favicon": "./assets/favicon.png"
     },
     "experiments": {
@@ -35,6 +38,9 @@
         "projectId": "7a682dbe-a8cf-48c3-ae52-768600148f7f"
       }
     },
-    "owner": "tima101"
+    "owner": "tima101",
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
