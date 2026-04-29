@@ -4,12 +4,17 @@ import { router } from 'expo-router';
 import { signUpWithEmailAndPassword } from '../firebase/auth_signup_password';
 
 export default function InscriptionPage() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleInscription = async () => {
+    if (!name.trim()) {
+      Alert.alert('Erreur', 'Veuillez entrer votre nom.');
+      return;
+    }
     try {
-      await signUpWithEmailAndPassword(email, password);
+      await signUpWithEmailAndPassword(email, password, name);
       router.replace('/(tabs)/profil');
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
@@ -28,6 +33,13 @@ export default function InscriptionPage() {
     <View style={styles.container}>
       <Text style={styles.title}>Créer un compte</Text>
 
+      <TextInput
+        placeholder="Nom"
+        style={styles.input}
+        value={name}
+        onChangeText={setName}
+        autoCapitalize="words"
+      />
       <TextInput
         placeholder="Email"
         style={styles.input}

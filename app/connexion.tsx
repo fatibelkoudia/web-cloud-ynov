@@ -17,7 +17,7 @@ export default function ConexionPage() {
       if (error.code === 'auth/invalid-credential') {
         Alert.alert('Erreur', 'Email ou mot de passe incorrect.');
       } else if (error.code === 'auth/user-not-found') {
-        Alert.alert('Erreur', 'Aucun utilisateur trouvé avec cet e-mail.');
+        Alert.alert('Erreur', 'Utilisateur non trouvé. Veuillez vérifier votre email.');
       } else if (error.code === 'auth/wrong-password') {
         Alert.alert('Erreur', 'Mot de passe incorrect.');
       } else {
