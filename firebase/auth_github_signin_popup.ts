@@ -1,40 +1,17 @@
-import { getAuth, GithubAuthProvider, signInWithPopup } from "firebase/auth";
-import { createGithubProvider } from "./auth_github_provider_create";
+import { Platform } from "react-native";
+import { getAuth, GithubAuthProvider } from "firebase/auth";
+import { provider } from "./auth_github_provider_create";
 
 export async function signinWithGithub() {
-  const auth = getAuth();
-  const provider = createGithubProvider();
-
-  console.log("signinWithGithub");
-
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const credential = GithubAuthProvider.credentialFromResult(result);
-    const token = credential?.accessToken;
-
-    // The signed-in user info.
-    const user = result.user;
-    console.log("signin success with github");
-
-    return { user, token, credential };
-  } catch (error: any) {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-
-    // The email of the user's account used.
-    const email = error.customData?.email;
-
-    // The AuthCredential type that was used.
-    const credential = GithubAuthProvider.credentialFromError(error);
-
-    console.error("signin error with github", {
-      errorCode,
-      errorMessage,
-      email,
-      credential,
-    });
-
-    throw error;
+  if (Platform.OS !== "web") {
+    throw new Error("La connexion GitHub via popup est disponible uniquement sur le web.");
   }
+
+  const { signInWithPopup } = await import("firebase/auth");
+  const auth = getAuth();
+  const result = await signInWithPopup(auth, provider);
+  const credential = GithubAuthProvider.credentialFromResult(result);
+  const token = credential?.accessToken ?? null;
+
+  return { user: result.user, token };
 }
