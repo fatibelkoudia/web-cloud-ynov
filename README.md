@@ -48,5 +48,11 @@ EXPO_PUBLIC_FACEBOOK_APP_SECRET=
 Le workflow GitHub Actions (`build_deploy_web_android.yml`) se déclenche à chaque push sur `main` :
 - Export web → déployé sur GitHub Pages
 - Build Android → déclenché via EAS
+<img width="1306" height="535" alt="image" src="https://github.com/user-attachments/assets/6a42bb9f-9505-44ed-bb1f-f4ccec26fc9f" />
 
-<img width="1306" height="704" alt="image" src="https://github.com/user-attachments/assets/c0f6989c-fd34-4f95-bd85-73c34b89a3fe" />
+
+
+### Test de l'authentification par téléphone
+Pour tester la connexion par SMS (OTP) utilisez les identifiants suivants configurés dans Firebase :
+- **Numéro :** `+33612345678`
+- **Code OTP :** `123456`
