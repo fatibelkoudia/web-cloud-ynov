@@ -41,6 +41,12 @@
     "owner": "tima101",
     "plugins": [
       "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos and videos"
+        }
+      ],
       "expo-web-browser"
     ]
   }
