@@ -1,7 +1,19 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '../../firebaseConfig';
+import { useEffect, useState } from 'react';
 
 export default function TabsLayout() {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <Tabs screenOptions={{ headerShown: true, tabBarActiveTintColor: '#007AFF' }}>
       <Tabs.Screen
@@ -18,6 +30,7 @@ export default function TabsLayout() {
           title: 'Connexion',
           tabBarLabel: 'Connexion',
           tabBarIcon: ({ color, size }) => <Ionicons name="log-in-outline" size={size} color={color} />,
+          href: user ? null : '/connexion',
         }}
       />
       <Tabs.Screen
@@ -26,6 +39,7 @@ export default function TabsLayout() {
           title: 'Profil',
           tabBarLabel: 'Profil',
           tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
+          href: user ? '/profil' : null,
         }}
       />
       <Tabs.Screen name="inscription" options={{ title: 'Inscription', href: null }} />
