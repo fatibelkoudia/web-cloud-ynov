@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { signUpWithEmailAndPassword } from '../../firebase/auth_signup_password';
 import { Toast } from '../../components/Toast';
+import { CommonStyles, Colors } from '../../constants/Theme';
 
 export default function InscriptionPage() {
   const [name, setName] = useState('');
@@ -42,44 +43,53 @@ export default function InscriptionPage() {
   return (
     <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <Toast message={toast} />
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Créer un compte</Text>
+      <ScrollView contentContainerStyle={CommonStyles.container} keyboardShouldPersistTaps="handled">
+        <Text style={CommonStyles.title}>Créer un compte</Text>
 
-        <TextInput
-          placeholder="Nom"
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-          autoCapitalize="words"
-          editable={!loading}
-          placeholderTextColor="#999"
-        />
-        <TextInput
-          placeholder="Email"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          editable={!loading}
-          placeholderTextColor="#999"
-        />
-        <TextInput
-          placeholder="Mot de passe (6 caractères min.)"
-          secureTextEntry
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          editable={!loading}
-          placeholderTextColor="#999"
-        />
+        <View style={CommonStyles.card}>
+          <Text style={CommonStyles.label}>Nom complet</Text>
+          <TextInput
+            placeholder="John Doe"
+            style={CommonStyles.input}
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="words"
+            editable={!loading}
+            placeholderTextColor="#999"
+          />
+          <Text style={CommonStyles.label}>Email</Text>
+          <TextInput
+            placeholder="votre@email.com"
+            style={CommonStyles.input}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            editable={!loading}
+            placeholderTextColor="#999"
+          />
+          <Text style={CommonStyles.label}>Mot de passe</Text>
+          <TextInput
+            placeholder="6 caractères min."
+            secureTextEntry
+            style={CommonStyles.input}
+            value={password}
+            onChangeText={setPassword}
+            editable={!loading}
+            placeholderTextColor="#999"
+          />
 
-        <Pressable
-          style={[styles.button, loading && styles.disabled]}
-          onPress={handleInscription}
-          disabled={loading}
-        >
-          <Text style={styles.buttonText}>{loading ? 'Création...' : "S'inscrire"}</Text>
+          <Pressable
+            style={[CommonStyles.button, CommonStyles.buttonPrimary, loading && CommonStyles.disabled]}
+            onPress={handleInscription}
+            disabled={loading}
+          >
+            {loading ? <ActivityIndicator color={Colors.white} /> : <Text style={CommonStyles.buttonText}>S'inscrire</Text>}
+          </Pressable>
+        </View>
+
+        <Pressable onPress={() => router.push('/connexion')} style={styles.loginLink}>
+          <Text style={styles.loginLinkText}>Déjà un compte ? Se connecter</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -87,14 +97,7 @@ export default function InscriptionPage() {
 }
 
 const styles = StyleSheet.create({
-  wrapper: { flex: 1, backgroundColor: '#fff' },
-  container: { flexGrow: 1, justifyContent: 'center', padding: 24 },
-  title: { fontSize: 26, fontWeight: 'bold', marginBottom: 28, textAlign: 'center', color: '#111' },
-  input: {
-    borderWidth: 1, borderColor: '#ddd', backgroundColor: '#fafafa',
-    padding: 13, marginBottom: 14, borderRadius: 8, fontSize: 15,
-  },
-  button: { backgroundColor: '#007AFF', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 4 },
-  buttonText: { color: '#fff', fontWeight: '700', fontSize: 15 },
-  disabled: { opacity: 0.6 },
+  wrapper: { flex: 1, backgroundColor: Colors.background },
+  loginLink: { marginTop: 16, alignItems: 'center' },
+  loginLinkText: { color: Colors.primary, fontWeight: '600' },
 });
