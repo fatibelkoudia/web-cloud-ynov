@@ -1,54 +1,87 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, FlatList, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 import { useEffect, useState } from 'react';
+import { CommonStyles, Colors } from '../../constants/Theme';
+import { subscribeToPosts, Post } from '../../firebase/get_post_data';
 
 export default function HomePage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
-    return () => unsubscribe();
+
+    const unsubscribePosts = subscribeToPosts((data) => {
+      setPosts(data);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubscribeAuth();
+      unsubscribePosts();
+    };
   }, []);
 
+  const renderPost = ({ item }: { item: Post }) => (
+    <View style={CommonStyles.card}>
+      <Text style={styles.postTitle}>{item.title}</Text>
+      <Text style={styles.postAuthor}>Par {item.authorName}</Text>
+      <Text style={styles.postContent} numberOfLines={3}>{item.content}</Text>
+      <Pressable 
+        style={styles.readMore} 
+        onPress={() => router.push({ pathname: '/blog/[slug]', params: { slug: item.id } })}
+      >
+        <Text style={styles.readMoreText}>Lire la suite →</Text>
+      </Pressable>
+    </View>
+  );
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bienvenue{user ? `, ${user.displayName || 'Utilisateur'}` : ''}</Text>
-      <Text style={styles.subtitle}>
-        {user 
-          ? 'Ravi de vous revoir ! Accédez à votre profil pour plus d\'options.'
-          : 'Connectez-vous ou créez un compte pour continuer.'}
-      </Text>
-
-      {user ? (
-        <Pressable style={styles.btnPrimary} onPress={() => router.push('/profil')}>
-          <Text style={styles.btnText}>Aller au profil</Text>
-        </Pressable>
-      ) : (
-        <>
-          <Pressable style={styles.btnPrimary} onPress={() => router.push('/connexion')}>
-            <Text style={styles.btnText}>Se connecter</Text>
-          </Pressable>
-
-          <Pressable style={styles.btnSecondary} onPress={() => router.push('/inscription')}>
-            <Text style={styles.btnTextSecondary}>Créer un compte</Text>
-          </Pressable>
-        </>
-      )}
+    <View style={CommonStyles.container}>
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id}
+        renderItem={renderPost}
+        ListHeaderComponent={
+          <View style={styles.header}>
+            <Text style={CommonStyles.title}>Fil d'actualité</Text>
+            {!user && (
+              <View style={styles.loginPrompt}>
+                <Text style={styles.loginPromptText}>Connectez-vous pour publier vos propres articles !</Text>
+                <Pressable style={[CommonStyles.button, CommonStyles.buttonPrimary]} onPress={() => router.push('/connexion')}>
+                  <Text style={CommonStyles.buttonText}>Se connecter</Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
+        }
+        ListEmptyComponent={
+          loading ? (
+            <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 50 }} />
+          ) : (
+            <Text style={styles.emptyText}>Aucun article pour le moment.</Text>
+          )
+        }
+        contentContainerStyle={{ paddingBottom: 40 }}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 28, backgroundColor: '#fff' },
-  title: { fontSize: 30, fontWeight: 'bold', marginBottom: 10, color: '#111' },
-  subtitle: { fontSize: 15, color: '#666', textAlign: 'center', marginBottom: 36, lineHeight: 22 },
-  btnPrimary: { backgroundColor: '#007AFF', paddingVertical: 14, paddingHorizontal: 40, borderRadius: 8, marginBottom: 12, width: '100%', alignItems: 'center' },
-  btnSecondary: { backgroundColor: '#fff', paddingVertical: 14, paddingHorizontal: 40, borderRadius: 8, borderWidth: 1, borderColor: '#007AFF', width: '100%', alignItems: 'center' },
-  btnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
-  btnTextSecondary: { color: '#007AFF', fontWeight: '700', fontSize: 15 },
+  header: { marginBottom: 20 },
+  loginPrompt: { backgroundColor: Colors.gray, padding: 15, borderRadius: 12, marginBottom: 20 },
+  loginPromptText: { marginBottom: 10, color: Colors.text, textAlign: 'center' },
+  postTitle: { fontSize: 20, fontWeight: 'bold', color: Colors.text, marginBottom: 4 },
+  postAuthor: { fontSize: 12, color: Colors.textSecondary, marginBottom: 12, textTransform: 'uppercase' },
+  postContent: { fontSize: 15, color: '#444', lineHeight: 22, marginBottom: 15 },
+  readMore: { alignSelf: 'flex-end' },
+  readMoreText: { color: Colors.primary, fontWeight: 'bold' },
+  emptyText: { textAlign: 'center', marginTop: 50, color: Colors.textSecondary, fontSize: 16 },
 });
