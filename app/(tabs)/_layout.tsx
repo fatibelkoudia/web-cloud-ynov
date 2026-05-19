@@ -25,6 +25,16 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="create"
+        options={{
+          title: 'Publier',
+          tabBarLabel: 'Publier',
+          tabBarIcon: ({ color, size }) => <Ionicons name="add-circle-outline" size={size} color={color} />,
+          href: user ? '/create' : null,
+          tabBarItemStyle: user ? {} : { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
         name="connexion"
         options={{
           title: 'Connexion',
@@ -40,6 +50,7 @@ export default function TabsLayout() {
           tabBarLabel: 'Profil',
           tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
           href: user ? '/profil' : null,
+          tabBarItemStyle: user ? {} : { display: 'none' },
         }}
       />
       <Tabs.Screen name="inscription" options={{ title: 'Inscription', href: null }} />
